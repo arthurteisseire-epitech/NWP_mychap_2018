@@ -1,0 +1,19 @@
+# General
+*.o
+*.a
+
+# Unit Tests
+*.gcno
+*.gcda
+*.gcov
+units
+coverage
+
+# Clion
+.idea/
+cmake-build-debug/
+CMakeFiles/
+
+# Project
+client
+server
