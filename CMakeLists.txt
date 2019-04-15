@@ -3,7 +3,7 @@ project(mychap C)
 
 add_compile_options(-Wall -Wextra)
 
-include_directories(include)
+include_directories(include server/include)
 
 file(GLOB_RECURSE sources src/*.c)
 add_executable(client ${sources})
