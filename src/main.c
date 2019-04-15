@@ -12,7 +12,8 @@ void ipv4_header()
     unsigned char header[20];
 
     header[0] = (4u << 4u) | 5u;
-    write(1, header, 1);
+    header[1] = 0b00011110;
+    write(1, header, 2);
 }
 
 int main(void)
