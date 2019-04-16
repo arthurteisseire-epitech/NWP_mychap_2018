@@ -20,8 +20,7 @@ int main(void)
     size_t size = sizeof("client hello");
     packet_t *packet = create_packet(size, "client hello");
     char buffer[4096];
-    int fd = socket(AF_INET, SOCK_RAW, IPPROTO_UDP);
-    int optval = 1;
+    int fd = init_socket();
     struct udphdr *udp;
     struct sockaddr_in info;
     size_t nb_bytes;
@@ -29,14 +28,6 @@ int main(void)
     info.sin_port = htons(2000);
     info.sin_addr.s_addr = packet->ip.daddr;
     info.sin_family = AF_INET;
-    if (fd == -1) {
-        perror("socket");
-        return 84;
-    }
-    if (setsockopt(fd, IPPROTO_IP, IP_HDRINCL, &optval, sizeof(int)) == -1) {
-        perror("setsockopt");
-        return 84;
-    }
     sendto(fd, packet, sizeof(struct iphdr) + sizeof(struct udphdr) + size, 0,
         (struct sockaddr *)&info, sizeof(info));
     do {

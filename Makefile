@@ -11,6 +11,7 @@ DSRC		=	src/
 
 SRC			=	$(DSRC)main.c		\
 				$(DSRC)header.c		\
+				$(DSRC)socket.c		\
 
 CFLAGS		+=	-Wall -Wextra $(INC)
 OBJ			=	$(SRC:.c=.o)

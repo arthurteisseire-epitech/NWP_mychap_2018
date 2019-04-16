@@ -14,6 +14,7 @@ typedef struct __attribute((packed))packet_s {
     char data[0];
 } packet_t;
 
+int init_socket(void);
 struct iphdr ipv4_header(unsigned short data_len, char *ip_s, char *ip_d);
 struct udphdr create_udp_header(void);
 unsigned short csum(unsigned short *buf, int nwords);
