@@ -8,6 +8,9 @@
 #include <netinet/ip.h>
 #include <netinet/udp.h>
 #include <arpa/inet.h>
+#include <stdlib.h>
+#include <string.h>
+#include "chap.h"
 
 unsigned short csum(unsigned short *buf, int nwords)
 {
@@ -47,4 +50,16 @@ struct udphdr create_udp_header(void)
     header.check = 0;
     header.len = htons(sizeof(struct udphdr));
     return header;
+}
+
+packet_t *create_packet(size_t size, char data[size])
+{
+    packet_t *packet = malloc(sizeof(packet_t) + size);
+
+    packet->ip = ipv4_header(size, "127.0.0.1", "127.0.0.1");
+    packet->udp = create_udp_header();
+    memcpy(packet->data, data, size);
+    packet->ip.check = csum((void *)packet,
+        sizeof(struct iphdr) + sizeof(struct udphdr) + 10);
+    return packet;
 }

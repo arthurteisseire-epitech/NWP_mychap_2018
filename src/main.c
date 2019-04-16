@@ -17,20 +17,18 @@
 
 int main(void)
 {
-    struct iphdr ip_header = ipv4_header(10, "127.0.0.1", "127.0.0.1");
-    struct udphdr udp_header = create_udp_header();
+    size_t size = sizeof("client hello");
+    packet_t *packet = create_packet(size, "client hello");
     char buffer[4096];
     int fd = socket(AF_INET, SOCK_RAW, IPPROTO_UDP);
     int optval = 1;
     struct udphdr *udp;
-    void *p = malloc(sizeof(struct iphdr) + sizeof(struct udphdr) + 10);
     struct sockaddr_in info;
     size_t nb_bytes;
 
     info.sin_port = htons(2000);
-    info.sin_addr.s_addr = ip_header.daddr;
+    info.sin_addr.s_addr = packet->ip.daddr;
     info.sin_family = AF_INET;
-
     if (fd == -1) {
         perror("socket");
         return 84;
@@ -39,11 +37,8 @@ int main(void)
         perror("setsockopt");
         return 84;
     }
-    memcpy(p, &ip_header, sizeof(struct iphdr));
-    memcpy(p + sizeof(struct iphdr), &udp_header, sizeof(struct udphdr));
-    memcpy(p + sizeof(struct iphdr) + sizeof(struct udphdr), "0123456789", 10);
-    ((struct iphdr *)p)->check = csum(p, sizeof(struct iphdr) + sizeof(struct udphdr) + 10);
-    sendto(fd, p, sizeof(struct iphdr) + sizeof(struct udphdr) + 10, 0, (struct sockaddr *)&info, sizeof(info));
+    sendto(fd, packet, sizeof(struct iphdr) + sizeof(struct udphdr) + size, 0,
+        (struct sockaddr *)&info, sizeof(info));
     do {
         nb_bytes = recv(fd, buffer, 4096, 0);
         if (nb_bytes == 0) {
