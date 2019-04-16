@@ -39,7 +39,7 @@ struct iphdr ipv4_header(unsigned short data_len, char *ip_s, char *ip_d)
     header.protocol = IPPROTO_UDP;
     header.saddr = inet_addr(ip_s);
     header.daddr = inet_addr(ip_d);
-    header.check = csum((unsigned short *)&header, header.tot_len);
+    header.check = 0;
     return header;
 }
 
@@ -56,7 +56,7 @@ struct udphdr create_udp_header(void)
 
 int main(void)
 {
-    struct iphdr ip_header = ipv4_header(0, "127.0.0.1", "127.0.0.1");
+    struct iphdr ip_header = ipv4_header(10, "127.0.0.1", "127.0.0.1");
     struct udphdr udp_header = create_udp_header();
     char buffer[4096];
     int fd = socket(AF_INET, SOCK_RAW, IPPROTO_UDP);
@@ -64,6 +64,7 @@ int main(void)
     struct udphdr *udp;
     void *p = malloc(sizeof(struct iphdr) + sizeof(struct udphdr) + 10);
     struct sockaddr_in info;
+    size_t nb_bytes;
 
     info.sin_port = htons(2000);
     info.sin_addr.s_addr = ip_header.daddr;
@@ -83,12 +84,13 @@ int main(void)
     ((struct iphdr *)p)->check = csum(p, sizeof(struct iphdr) + sizeof(struct udphdr) + 10);
     sendto(fd, p, sizeof(struct iphdr) + sizeof(struct udphdr) + 10, 0, (struct sockaddr *)&info, sizeof(info));
     do {
-        if (recv(fd, buffer, 4096, 0) == -1) {
+        nb_bytes = recv(fd, buffer, 4096, 0);
+        if (nb_bytes == 0) {
             perror("recv");
             return 84;
         }
         udp = (void *)buffer + sizeof(struct iphdr);
     } while (ntohs(udp->uh_sport) != 2000);
-    write(1, &buffer, sizeof(buffer));
+    write(1, buffer, nb_bytes);
     return 0;
 }
