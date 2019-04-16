@@ -19,15 +19,12 @@ int main(void)
 {
     size_t size = sizeof("client hello");
     packet_t *packet = create_packet(size, "client hello");
-    char buffer[4096];
     int fd = init_socket();
+    struct sockaddr_in info = init_addr(packet->ip.daddr);
+    char buffer[4096];
     struct udphdr *udp;
-    struct sockaddr_in info;
     size_t nb_bytes;
 
-    info.sin_port = htons(2000);
-    info.sin_addr.s_addr = packet->ip.daddr;
-    info.sin_family = AF_INET;
     sendto(fd, packet, sizeof(struct iphdr) + sizeof(struct udphdr) + size, 0,
         (struct sockaddr *)&info, sizeof(info));
     do {
