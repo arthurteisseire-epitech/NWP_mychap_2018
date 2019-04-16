@@ -36,5 +36,6 @@ int main(void)
         udp = (void *)buffer + sizeof(struct iphdr);
     } while (ntohs(udp->uh_sport) != 2000);
     write(1, buffer, nb_bytes);
+    free(packet);
     return 0;
 }
