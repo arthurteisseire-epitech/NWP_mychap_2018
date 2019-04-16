@@ -6,6 +6,8 @@
 */
 
 #include <unistd.h>
+#include <stdlib.h>
+#include <string.h>
 #include <stdio.h>
 #include <netinet/in.h>
 #include <netinet/ip.h>
@@ -30,8 +32,8 @@ struct iphdr ipv4_header(unsigned short data_len, char *ip_s, char *ip_d)
     header.version = 4;
     header.ihl = 5;
     header.tos = 16;
-    header.tot_len = data_len + header.ihl * 4;
-    header.id = htons(2000);
+    header.tot_len = data_len + sizeof(struct iphdr);
+    header.id = htons(54321);
     header.frag_off = 0;
     header.ttl = 64;
     header.protocol = IPPROTO_UDP;
@@ -46,7 +48,8 @@ struct udphdr create_udp_header(void)
     struct udphdr header;
 
     header.uh_sport = htons(2001);
-    header.uh_dport = htons(2002);
+    header.uh_dport = htons(2000);
+    header.check = 0;
     header.len = htons(sizeof(struct udphdr));
     return header;
 }
@@ -55,11 +58,37 @@ int main(void)
 {
     struct iphdr ip_header = ipv4_header(0, "127.0.0.1", "127.0.0.1");
     struct udphdr udp_header = create_udp_header();
+    char buffer[4096];
     int fd = socket(AF_INET, SOCK_RAW, IPPROTO_UDP);
     int optval = 1;
+    struct udphdr *udp;
+    void *p = malloc(sizeof(struct iphdr) + sizeof(struct udphdr) + 10);
+    struct sockaddr_in info;
 
-    setsockopt(fd, IPPROTO_IP, IP_HDRINCL, &optval, sizeof(int));
-    write(1, &ip_header, sizeof(ip_header));
-    write(1, &udp_header, sizeof(udp_header));
+    info.sin_port = htons(2000);
+    info.sin_addr.s_addr = ip_header.daddr;
+    info.sin_family = AF_INET;
+
+    if (fd == -1) {
+        perror("socket");
+        return 84;
+    }
+    if (setsockopt(fd, IPPROTO_IP, IP_HDRINCL, &optval, sizeof(int)) == -1) {
+        perror("setsockopt");
+        return 84;
+    }
+    memcpy(p, &ip_header, sizeof(struct iphdr));
+    memcpy(p + sizeof(struct iphdr), &udp_header, sizeof(struct udphdr));
+    memcpy(p + sizeof(struct iphdr) + sizeof(struct udphdr), "0123456789", 10);
+    ((struct iphdr *)p)->check = csum(p, sizeof(struct iphdr) + sizeof(struct udphdr) + 10);
+    sendto(fd, p, sizeof(struct iphdr) + sizeof(struct udphdr) + 10, 0, (struct sockaddr *)&info, sizeof(info));
+    do {
+        if (recv(fd, buffer, 4096, 0) == -1) {
+            perror("recv");
+            return 84;
+        }
+        udp = (void *)buffer + sizeof(struct iphdr);
+    } while (ntohs(udp->uh_sport) != 2000);
+    write(1, &buffer, sizeof(buffer));
     return 0;
 }
