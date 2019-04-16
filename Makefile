@@ -9,7 +9,8 @@ CC			=	gcc
 INC			=	-Iinclude/
 DSRC		=	src/
 
-SRC			=	$(DSRC)main.c			\
+SRC			=	$(DSRC)main.c		\
+				$(DSRC)header.c		\
 
 CFLAGS		+=	-Wall -Wextra $(INC)
 OBJ			=	$(SRC:.c=.o)
