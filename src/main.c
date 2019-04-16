@@ -25,8 +25,8 @@ int main(void)
     struct udphdr *udp;
     size_t nb_bytes;
 
-    sendto(fd, packet, sizeof(struct iphdr) + sizeof(struct udphdr) + size, 0,
-        (struct sockaddr *)&info, sizeof(info));
+    sendto(fd, packet, sizeof(packet_t) + size, 0, (struct sockaddr *)&info,
+        sizeof(info));
     do {
         nb_bytes = recv(fd, buffer, 4096, 0);
         if (nb_bytes == 0) {
