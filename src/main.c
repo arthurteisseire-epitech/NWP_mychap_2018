@@ -18,14 +18,17 @@
 int main(int ac, char *av[])
 {
     size_t size = sizeof("client hello");
-    packet_t *packet = create_packet(size, "client hello");
+    chap_t chap;
     int fd = init_socket();
-    struct sockaddr_in info = init_addr(packet->ip.daddr);
+    struct sockaddr_in info;
     char buffer[4096];
     struct udphdr *udp;
     size_t nb_bytes;
+    packet_t *packet = &chap.packet;
 
-    parse_args(packet, ac, av);
+    init_packet(&chap.packet, size, "client hello");
+    parse_args(&chap, ac, av);
+    info = init_addr(packet->ip.daddr);
     sendto(fd, packet, sizeof(packet_t) + size, 0, (struct sockaddr *)&info,
         sizeof(info));
     do {
@@ -37,6 +40,5 @@ int main(int ac, char *av[])
         udp = (void *)buffer + sizeof(struct iphdr);
     } while (ntohs(udp->uh_sport) != 2000);
     write(1, buffer, nb_bytes);
-    free(packet);
     return 0;
 }

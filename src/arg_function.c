@@ -12,15 +12,18 @@
 #include <errno.h>
 #include "chap.h"
 
-int arg_target(packet_t *packet, char *optarg)
+int arg_target(chap_t *chap, char *optarg)
 {
+    packet_t *packet = &chap->packet;
+
     packet->ip.saddr = inet_addr(optarg);
     packet->ip.daddr = inet_addr(optarg);
     return 0;
 }
 
-int arg_port(packet_t *packet, char *optarg)
+int arg_port(chap_t *chap, char *optarg)
 {
+    packet_t *packet = &chap->packet;
     char *p = strdup(optarg);
     char *end_ptr = p;
     int port = strtol(p, &end_ptr, 10);
@@ -35,9 +38,8 @@ int arg_port(packet_t *packet, char *optarg)
     return 0;
 }
 
-int arg_password(packet_t *packet, char *optarg)
+int arg_password(chap_t *chap, char *optarg)
 {
-    (void)packet;
-    (void)optarg;
+    chap->password = optarg;
     return 0;
 }

@@ -32,7 +32,7 @@ static int get_index(const char *shorts, char c)
     return (short_index[i] - '0');
 }
 
-int parse_args(packet_t *packet, int ac, char **av)
+int parse_args(chap_t *chap, int ac, char **av)
 {
     const char *shorts = "t:p:P:";
     int opt_index = 0;
@@ -46,6 +46,6 @@ int parse_args(packet_t *packet, int ac, char **av)
             exit(84);
         opt_index = get_index(shorts, c);
         if (optarg)
-            args[opt_index](packet, optarg);
+            args[opt_index](chap, optarg);
     }
 }

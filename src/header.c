@@ -49,14 +49,11 @@ static struct udphdr create_udp_header(void)
     return header;
 }
 
-packet_t *create_packet(size_t size, char data[size])
+void init_packet(packet_t *packet, size_t size, char data[size])
 {
-    packet_t *packet = malloc(sizeof(packet_t) + size);
-
     packet->ip = ipv4_header(size);
     packet->udp = create_udp_header();
     memcpy(packet->data, data, size);
     packet->ip.check = check_sum((void *)packet,
         sizeof(struct iphdr) + sizeof(struct udphdr) + 10);
-    return packet;
 }

@@ -17,16 +17,21 @@ typedef struct __attribute((packed))packet_s {
     char data[0];
 } packet_t;
 
-typedef int (*arg_t)(packet_t *, char *);
+typedef struct chap_s {
+    char *password;
+    packet_t packet;
+} chap_t;
+
+typedef int (*arg_t)(chap_t *, char *);
 
 int init_socket(void);
 
-packet_t *create_packet(size_t size, char *data);
+void init_packet(packet_t *packet, size_t size, char *data);
 struct sockaddr_in init_addr(uint32_t daddr);
 
-int parse_args(packet_t *packet, int ac, char **av);
-int arg_target(packet_t *packet, char *optarg);
-int arg_port(packet_t *packet, char *optarg);
-int arg_password(packet_t *packet, char *optarg);
+int parse_args(chap_t *chap, int ac, char **av);
+int arg_target(chap_t *packet, char *optarg);
+int arg_port(chap_t *packet, char *optarg);
+int arg_password(chap_t *packet, char *optarg);
 
 #endif
