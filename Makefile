@@ -16,7 +16,7 @@ SRC			=	$(DSRC)main.c		\
 				$(DSRC)arg_function.c	\
 				$(DSRC)send.c	\
 
-CFLAGS		+=	-Wall -Wextra $(INC)
+CFLAGS		+=	-Wall -Wextra $(INC) -lcrypto
 OBJ			=	$(SRC:.c=.o)
 NAME		=	client
 
