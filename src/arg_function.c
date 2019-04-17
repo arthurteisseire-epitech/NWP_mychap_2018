@@ -14,7 +14,10 @@
 
 int arg_target(chap_t *chap, char *optarg)
 {
-    chap->ip = inet_addr(optarg);
+    if (strcmp(optarg, "localhost") == 0)
+        chap->ip = inet_addr("127.0.0.1");
+    else
+        chap->ip = inet_addr(optarg);
     return 0;
 }
 
