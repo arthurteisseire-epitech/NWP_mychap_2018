@@ -34,18 +34,25 @@ int receive(int fd, packet_t *packet)
     return 0;
 }
 
+static char *send_password(const chap_t *chap)
+{
+    (void)chap;
+    return NULL;
+}
+
 int main(int ac, char *av[])
 {
     size_t size = strlen("client hello");
     chap_t chap;
     int fd = init_socket();
-    struct sockaddr_in info;
 
     chap.packet = create_packet(size, "client hello");
     parse_args(&chap, ac, av);
-    info = init_addr(chap.packet);
-    sendto(fd, chap.packet, sizeof(packet_t) + size, 0,
-        (struct sockaddr *)&info, sizeof(info));
+    chap.info = init_addr(chap.packet);
+    send_to(&chap, fd, size);
     receive(fd, chap.packet);
+    send_password(&chap);
+    sendto(fd, chap.packet, sizeof(packet_t) + size, 0,
+        (struct sockaddr *)&chap.info, sizeof(chap.info));
     return 0;
 }

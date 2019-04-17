@@ -18,8 +18,10 @@ typedef struct __attribute((packed))packet_s {
 } packet_t;
 
 typedef struct chap_s {
-    char *password;
     packet_t *packet;
+    struct sockaddr_in info;
+    char *password;
+    size_t data_size;
 } chap_t;
 
 typedef int (*arg_t)(chap_t *, char *);
@@ -33,5 +35,7 @@ int parse_args(chap_t *chap, int ac, char **av);
 int arg_target(chap_t *packet, char *optarg);
 int arg_port(chap_t *packet, char *optarg);
 int arg_password(chap_t *packet, char *optarg);
+
+void send_to(chap_t *chap, int fd, size_t data_size);
 
 #endif
