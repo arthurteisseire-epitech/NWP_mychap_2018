@@ -15,7 +15,7 @@
 #include <arpa/inet.h>
 #include "chap.h"
 
-int main(void)
+int main(int ac, char *av[])
 {
     size_t size = sizeof("client hello");
     packet_t *packet = create_packet(size, "client hello");
@@ -25,6 +25,7 @@ int main(void)
     struct udphdr *udp;
     size_t nb_bytes;
 
+    parse_args(packet, ac, av);
     sendto(fd, packet, sizeof(packet_t) + size, 0, (struct sockaddr *)&info,
         sizeof(info));
     do {

@@ -35,8 +35,6 @@ struct iphdr ipv4_header(unsigned short data_len, char *ip_s, char *ip_d)
     header.frag_off = 0;
     header.ttl = 64;
     header.protocol = IPPROTO_UDP;
-    header.saddr = inet_addr(ip_s);
-    header.daddr = inet_addr(ip_d);
     header.check = 0;
     return header;
 }
