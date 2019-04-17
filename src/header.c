@@ -12,7 +12,7 @@
 #include <string.h>
 #include "chap.h"
 
-static unsigned short check_sum(unsigned short *buf, int nwords)
+static unsigned short check_sum(unsigned char *buf, int nwords)
 {
     unsigned long sum;
 
