@@ -25,7 +25,7 @@ int arg_port(packet_t *packet, char *optarg)
     char *end_ptr = p;
     int port = strtol(p, &end_ptr, 10);
 
-    if (errno == 0 && (p == end_ptr || *p != '\0')) {
+    if (errno == 0 && p == end_ptr) {
         fprintf(stderr, "'%s' isn't a valid number\n", optarg);
         free(p);
         exit(84);

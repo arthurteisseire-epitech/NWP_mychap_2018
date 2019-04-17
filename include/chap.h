@@ -20,9 +20,6 @@ typedef struct __attribute((packed))packet_s {
 typedef int (*arg_t)(packet_t *, char *);
 
 int init_socket(void);
-struct iphdr ipv4_header(unsigned short data_len, char *ip_s, char *ip_d);
-struct udphdr create_udp_header(void);
-unsigned short csum(unsigned short *buf, int nwords);
 
 packet_t *create_packet(size_t size, char *data);
 struct sockaddr_in init_addr(uint32_t daddr);

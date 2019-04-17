@@ -12,7 +12,7 @@
 #include <string.h>
 #include "chap.h"
 
-unsigned short csum(unsigned short *buf, int nwords)
+static unsigned short check_sum(unsigned short *buf, int nwords)
 {
     unsigned long sum;
 
@@ -23,7 +23,7 @@ unsigned short csum(unsigned short *buf, int nwords)
     return ~sum;
 }
 
-struct iphdr ipv4_header(unsigned short data_len, char *ip_s, char *ip_d)
+static struct iphdr ipv4_header(unsigned short data_len)
 {
     struct iphdr header = {0};
 
@@ -39,12 +39,11 @@ struct iphdr ipv4_header(unsigned short data_len, char *ip_s, char *ip_d)
     return header;
 }
 
-struct udphdr create_udp_header(void)
+static struct udphdr create_udp_header(void)
 {
     struct udphdr header;
 
     header.uh_sport = htons(2001);
-    header.uh_dport = htons(2000);
     header.check = 0;
     header.len = htons(sizeof(struct udphdr));
     return header;
@@ -54,10 +53,10 @@ packet_t *create_packet(size_t size, char data[size])
 {
     packet_t *packet = malloc(sizeof(packet_t) + size);
 
-    packet->ip = ipv4_header(size, "127.0.0.1", "127.0.0.1");
+    packet->ip = ipv4_header(size);
     packet->udp = create_udp_header();
     memcpy(packet->data, data, size);
-    packet->ip.check = csum((void *)packet,
+    packet->ip.check = check_sum((void *)packet,
         sizeof(struct iphdr) + sizeof(struct udphdr) + 10);
     return packet;
 }
