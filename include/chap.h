@@ -26,8 +26,8 @@ typedef int (*arg_t)(chap_t *, char *);
 
 int init_socket(void);
 
-packet_t *create_packet(size_t size, char *data);
-struct sockaddr_in init_addr(uint32_t daddr);
+packet_t *create_packet(size_t data_len, char *data);
+struct sockaddr_in init_addr(packet_t *packet);
 
 int parse_args(chap_t *chap, int ac, char **av);
 int arg_target(chap_t *packet, char *optarg);

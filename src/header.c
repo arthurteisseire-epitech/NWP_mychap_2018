@@ -30,7 +30,7 @@ static struct iphdr ipv4_header(unsigned short data_len)
     header.version = 4;
     header.ihl = 5;
     header.tos = 16;
-    header.tot_len = data_len + sizeof(struct iphdr);
+    header.tot_len = data_len + sizeof(struct iphdr) + sizeof(struct udphdr);
     header.id = htons(54321);
     header.frag_off = 0;
     header.ttl = 64;
@@ -39,24 +39,24 @@ static struct iphdr ipv4_header(unsigned short data_len)
     return header;
 }
 
-static struct udphdr create_udp_header(void)
+static struct udphdr create_udp_header(size_t data_len)
 {
     struct udphdr header;
 
     header.uh_sport = htons(2001);
     header.check = 0;
-    header.len = htons(sizeof(struct udphdr));
+    header.len = htons(sizeof(struct udphdr) + data_len);
     return header;
 }
 
-packet_t *create_packet(size_t size, char data[size])
+packet_t *create_packet(size_t data_len, char data[data_len])
 {
-    packet_t *packet = malloc(sizeof(packet_t) + size);
+    packet_t *packet = malloc(sizeof(packet_t) + data_len);
 
-    packet->ip = ipv4_header(size);
-    packet->udp = create_udp_header();
-    memcpy(packet->data, data, size);
+    packet->ip = ipv4_header(data_len);
+    packet->udp = create_udp_header(data_len);
+    memcpy(packet->data, data, data_len);
     packet->ip.check = check_sum((void *)packet,
-        sizeof(struct iphdr) + sizeof(struct udphdr) + 10);
+        sizeof(struct iphdr) + sizeof(struct udphdr) + data_len);
     return packet;
 }

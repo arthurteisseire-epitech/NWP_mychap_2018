@@ -8,6 +8,7 @@
 #include <arpa/inet.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "chap.h"
 
 int init_socket(void)
 {
@@ -25,12 +26,12 @@ int init_socket(void)
     return fd;
 }
 
-struct sockaddr_in init_addr(uint32_t daddr)
+struct sockaddr_in init_addr(packet_t *packet)
 {
     struct sockaddr_in info;
 
-    info.sin_port = htons(2000);
-    info.sin_addr.s_addr = daddr;
+    info.sin_port = packet->udp.uh_dport;
+    info.sin_addr.s_addr = packet->ip.daddr;
     info.sin_family = AF_INET;
     return info;
 }

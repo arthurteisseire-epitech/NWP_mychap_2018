@@ -36,14 +36,14 @@ int receive(int fd, packet_t *packet)
 
 int main(int ac, char *av[])
 {
-    size_t size = sizeof("client hello");
+    size_t size = strlen("client hello");
     chap_t chap;
     int fd = init_socket();
     struct sockaddr_in info;
 
     chap.packet = create_packet(size, "client hello");
     parse_args(&chap, ac, av);
-    info = init_addr(chap.packet->ip.daddr);
+    info = init_addr(chap.packet);
     sendto(fd, chap.packet, sizeof(packet_t) + size, 0,
         (struct sockaddr *)&info, sizeof(info));
     receive(fd, chap.packet);

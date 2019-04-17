@@ -14,7 +14,7 @@
 
 int arg_target(chap_t *chap, char *optarg)
 {
-    chap->packet->ip.saddr = inet_addr(optarg);
+    chap->packet->ip.saddr = inet_addr("127.0.0.1");
     chap->packet->ip.daddr = inet_addr(optarg);
     return 0;
 }
