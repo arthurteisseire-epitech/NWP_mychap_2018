@@ -59,7 +59,7 @@ void init_packet(chap_t *chap, char *data)
     chap->packet = malloc(sizeof(packet_t) + len);
     chap->packet->ip = ipv4_header(chap->ip, len);
     chap->packet->udp = create_udp_header(chap, len);
-    memcpy(chap->packet->data, data, len);
+    strcpy(chap->packet->data, data);
     chap->packet->ip.check = check_sum((void *)chap->packet,
-        sizeof(struct iphdr) + sizeof(struct udphdr) + len);
+        sizeof(packet_t) + len);
 }

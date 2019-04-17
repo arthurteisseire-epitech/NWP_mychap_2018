@@ -21,7 +21,6 @@ typedef struct chap_s {
     packet_t *packet;
     struct sockaddr_in info;
     char *password;
-    size_t data_size;
     int port;
     in_addr_t ip;
 } chap_t;

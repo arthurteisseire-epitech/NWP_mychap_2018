@@ -20,10 +20,11 @@ char *receive(int fd, chap_t *chap)
 {
     struct udphdr *udp;
     char *buffer = calloc(1, 4096);
+    size_t nb_bytes;
 
     do {
-        chap->data_size = recv(fd, buffer, 4096, 0);
-        if (chap->data_size == 0) {
+        nb_bytes = recv(fd, buffer, 4096, 0);
+        if (nb_bytes == 0) {
             perror("recv");
             exit(84);
         }
@@ -37,7 +38,7 @@ static char *concat(const char *left, size_t len, const char *right)
     char *res = calloc(1, len + strlen(right) + 1);
 
     memcpy(res, left, len);
-    strcat(res, right);
+    memcpy(&res[len], right, strlen(right));
     return (res);
 }
 
@@ -61,9 +62,8 @@ char *sha256(const char *str, size_t nb_bytes)
 
 static void send_password(int fd, chap_t *chap, const char *random_bytes)
 {
-    char *str = concat(random_bytes, chap->data_size, chap->password);
-    size_t data_len = chap->data_size + strlen(chap->password);
-    char *hash = sha256(str, data_len);
+    char *str = concat(random_bytes, 10, chap->password);
+    char *hash = sha256(str, 10 + strlen(chap->password));
 
     init_packet(chap, hash);
     send_to(chap, fd, strlen(hash));
@@ -82,5 +82,7 @@ int main(int ac, char *av[])
     send_to(&chap, fd, size);
     rec = receive(fd, &chap);
     send_password(fd, &chap, rec);
+    rec = receive(fd, &chap);
+    printf("%s\n", rec + sizeof(packet_t));
     return 0;
 }
