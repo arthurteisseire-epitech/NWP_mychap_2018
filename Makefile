@@ -15,7 +15,7 @@ SRC			=	$(DSRC)main.c		\
 				$(DSRC)parse_args.c	\
 				$(DSRC)arg_function.c	\
 
-CFLAGS		+=	-Wall -Wextra $(INC)
+CFLAGS		+=	-Wall -Wextra $(INC) -lopenssl
 OBJ			=	$(SRC:.c=.o)
 NAME		=	client
 

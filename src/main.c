@@ -13,6 +13,7 @@
 #include <netinet/ip.h>
 #include <netinet/udp.h>
 #include <arpa/inet.h>
+#include <openssl/sha.h>
 #include "chap.h"
 
 int receive(int fd, packet_t *packet)
