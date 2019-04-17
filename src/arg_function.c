@@ -14,8 +14,7 @@
 
 int arg_target(chap_t *chap, char *optarg)
 {
-    chap->packet->ip.saddr = inet_addr("127.0.0.1");
-    chap->packet->ip.daddr = inet_addr(optarg);
+    chap->ip = inet_addr(optarg);
     return 0;
 }
 
@@ -30,7 +29,7 @@ int arg_port(chap_t *chap, char *optarg)
         free(p);
         exit(84);
     }
-    chap->packet->udp.uh_dport = htons(port);
+    chap->port = port;
     free(p);
     return 0;
 }

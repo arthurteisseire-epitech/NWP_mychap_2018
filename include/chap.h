@@ -22,13 +22,15 @@ typedef struct chap_s {
     struct sockaddr_in info;
     char *password;
     size_t data_size;
+    int port;
+    in_addr_t ip;
 } chap_t;
 
 typedef int (*arg_t)(chap_t *, char *);
 
 int init_socket(void);
 
-packet_t *create_packet(size_t data_len, char *data);
+void init_packet(chap_t *chap, char *data);
 struct sockaddr_in init_addr(packet_t *packet);
 
 int parse_args(chap_t *chap, int ac, char **av);

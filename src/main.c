@@ -65,10 +65,7 @@ static void send_password(int fd, chap_t *chap, const char *random_bytes)
     size_t data_len = chap->data_size + strlen(chap->password);
     char *hash = sha256(str, data_len);
 
-    printf("%s\n", hash);
-    chap->packet = realloc(chap->packet, sizeof(packet_t) + strlen(hash));
-    memcpy(chap->packet->data, hash, strlen(hash));
-    printf("%s\n", chap->packet->data);
+    init_packet(chap, hash);
     send_to(chap, fd, strlen(hash));
 }
 
@@ -79,8 +76,8 @@ int main(int ac, char *av[])
     int fd = init_socket();
     char *rec;
 
-    chap.packet = create_packet(size, "client hello");
     parse_args(&chap, ac, av);
+    init_packet(&chap, "client hello");
     chap.info = init_addr(chap.packet);
     send_to(&chap, fd, size);
     rec = receive(fd, &chap);
