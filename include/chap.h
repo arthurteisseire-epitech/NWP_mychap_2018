@@ -19,14 +19,14 @@ typedef struct __attribute((packed))packet_s {
 
 typedef struct chap_s {
     char *password;
-    packet_t packet;
+    packet_t *packet;
 } chap_t;
 
 typedef int (*arg_t)(chap_t *, char *);
 
 int init_socket(void);
 
-void init_packet(packet_t *packet, size_t size, char *data);
+packet_t *create_packet(size_t size, char *data);
 struct sockaddr_in init_addr(uint32_t daddr);
 
 int parse_args(chap_t *chap, int ac, char **av);

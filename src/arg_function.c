@@ -14,16 +14,13 @@
 
 int arg_target(chap_t *chap, char *optarg)
 {
-    packet_t *packet = &chap->packet;
-
-    packet->ip.saddr = inet_addr(optarg);
-    packet->ip.daddr = inet_addr(optarg);
+    chap->packet->ip.saddr = inet_addr(optarg);
+    chap->packet->ip.daddr = inet_addr(optarg);
     return 0;
 }
 
 int arg_port(chap_t *chap, char *optarg)
 {
-    packet_t *packet = &chap->packet;
     char *p = strdup(optarg);
     char *end_ptr = p;
     int port = strtol(p, &end_ptr, 10);
@@ -33,7 +30,7 @@ int arg_port(chap_t *chap, char *optarg)
         free(p);
         exit(84);
     }
-    packet->udp.uh_dport = htons(port);
+    chap->packet->udp.uh_dport = htons(port);
     free(p);
     return 0;
 }
