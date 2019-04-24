@@ -22,7 +22,7 @@ typedef struct chap_s {
     struct sockaddr_in info;
     char *password;
     int port;
-    in_addr_t ip;
+    char *ip;
 } chap_t;
 
 typedef int (*arg_t)(chap_t *, char *);

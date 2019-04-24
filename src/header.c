@@ -23,7 +23,7 @@ static unsigned short check_sum(unsigned char *buf, int nwords)
     return ~sum;
 }
 
-static struct iphdr ipv4_header(in_addr_t daddr, unsigned short data_len)
+static struct iphdr ipv4_header(char *daddr, unsigned short data_len)
 {
     struct iphdr header = {0};
 
@@ -34,7 +34,7 @@ static struct iphdr ipv4_header(in_addr_t daddr, unsigned short data_len)
     header.id = htons(54321);
     header.frag_off = 0;
     header.saddr = inet_addr("127.0.0.1");
-    header.daddr = daddr;
+    header.daddr = inet_addr(daddr);
     header.ttl = 64;
     header.protocol = IPPROTO_UDP;
     header.check = 0;
