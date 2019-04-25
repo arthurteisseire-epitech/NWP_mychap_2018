@@ -10,7 +10,6 @@
 #include <arpa/inet.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ifaddrs.h>
 #include "chap.h"
 
 static unsigned short check_sum(unsigned char *buf, int nwords)
