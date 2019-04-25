@@ -10,6 +10,7 @@
 #include <arpa/inet.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ifaddrs.h>
 #include "chap.h"
 
 static unsigned short check_sum(unsigned char *buf, int nwords)
@@ -33,7 +34,7 @@ static struct iphdr ipv4_header(char *daddr, unsigned short data_len)
     header.tot_len = data_len + sizeof(struct iphdr) + sizeof(struct udphdr);
     header.id = htons(54321);
     header.frag_off = 0;
-    header.saddr = inet_addr("127.0.0.1");
+    header.saddr = 0;
     header.daddr = inet_addr(daddr);
     header.ttl = 64;
     header.protocol = IPPROTO_UDP;
