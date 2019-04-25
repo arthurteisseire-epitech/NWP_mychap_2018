@@ -19,7 +19,7 @@
 static char *receive(int fd, chap_t *chap)
 {
     struct udphdr *udp;
-    char *buffer = calloc(1, 4096);
+    char *buffer = malloc(4096);
     size_t nb_bytes;
 
     do {
@@ -28,6 +28,7 @@ static char *receive(int fd, chap_t *chap)
             perror("recv");
             exit(84);
         }
+        buffer[nb_bytes] = 0;
         udp = (void *)buffer + sizeof(struct iphdr);
     } while (ntohs(udp->uh_sport) != ntohs(chap->packet->udp.uh_dport));
     return buffer + sizeof(packet_t);
